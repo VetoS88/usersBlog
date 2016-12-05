@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Блоги</title>
+</head>
+<body>
+    <div class="personal-blog">
+        {% block blog %}
+        {% endblock %}
+    </div>
+    <h3><a href="/">Главная</a></h3>
+    <h4><a href="/users">Блоги пользователей</a></h4>
+    <h4><a href="/">Мой блог</a></h4>
+    <div class="personal-feeds">
+        {% block feeds %}{% endblock %}
+    </div>
+
+</body>
+</html>

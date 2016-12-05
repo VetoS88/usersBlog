@@ -94,6 +94,6 @@ ENV/
 /ТЗ.txt
 Archive/
 git remote add origin https://github.com/VetoS88/usersBlog
-/blogProject/blog/migrations/
+
 /usersBlogvenv/
 

@@ -1,12 +1,42 @@
 from django.db import models as m
 
 
-class Blog(m.Model):
+class NewsFeed(m.Model):
 
     user = m.ForeignKey(
         'auth.User',
         verbose_name='Пользователь',
     )
+
+    blogs = m.ManyToManyField(
+        'Blog',
+        verbose_name='Блоги',
+    )
+
+    def __str__(self):
+        title = "{}'s newsfeed".format(self.user.username)
+        return title
+
+    class Meta:
+        verbose_name = "Новостная лента"
+        verbose_name_plural = "Новостные ленты"
+
+
+class Blog(m.Model):
+
+    name = m.CharField(
+        'Название',
+        max_length=50,
+    )
+
+    user = m.OneToOneField(
+        'auth.User',
+        verbose_name='Пользователь',
+    )
+
+    def __str__(self):
+        title = "{}'s blog".format(self.user.username)
+        return title
 
     class Meta:
         verbose_name = "Блог"
@@ -24,49 +54,35 @@ class Post(m.Model):
         'Заголовок',
         max_length=200,
     )
-    text = m.TextField(
-        'Текст сообщения',
-    )
+
+    text = m.TextField('Текст сообщения')
+
     created_date = m.DateTimeField(
         'Создан',
         auto_now_add=True,
+    )
+
+    newsfeeds = m.ManyToManyField(
+        NewsFeed,
+        verbose_name='Новости',
+        blank=True,
+        through='Reviewed'
     )
 
     def __str__(self):
         return self.title
 
     class Meta:
-        ordering = ["-created_date", "user"]
+        ordering = ["-created_date"]
         get_latest_by = "create_date"
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
 
 
-class NewsFeed(m.Model):
-
-    user = m.ForeignKey(
-        'auth.User',
-        verbose_name='Пользователь',
-    )
-    posts = m.ManyToManyField(
-        Blog,
-        verbose_name='Новости',
-    )
-
-    class Meta:
-        verbose_name = "Новостная лента"
-        verbose_name_plural = "Новостные ленты"
-
-
 class Reviewed(m.Model):
 
-    post = m.ManyToManyField(
-        Post,
-    )
-
-    blog = m.ForeignKey(
-        Blog,
-    )
+    post = m.ForeignKey(Post)
+    news_feed = m.ForeignKey(NewsFeed)
 
     isreviewed = m.BooleanField(
         'Просмотрен',

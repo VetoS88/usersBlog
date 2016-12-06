@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-{% block feeds %}
-    {% for post in feeds %}
-    <h6>Дата публикации:{{ posts.created_date }}</h6>
-    <h4><a href="/post/get/{{ post.id }}/">{{ post.title }}</a></h4>
-    <p>{{ post.text }}</p>
-    <hr>
-{% endfor %}
-{% endblock%}

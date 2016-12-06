@@ -1,0 +1,12 @@
+{% extends 'blog/index.html' %}
+{% block content %}
+    <h4>Мой блог</h4>
+    <h4>{{ blog.name }}</h4>
+    <hr>
+    {% for post in posts %}
+        <p><a href="/post/get/{{ post.id }}/">{{ post.title }}</a></p>
+        <p>Дата создания: {{ post.created_date }}</p>
+    {% endfor %}
+
+
+{% endblock%}

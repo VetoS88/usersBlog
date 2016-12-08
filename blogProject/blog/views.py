@@ -11,7 +11,6 @@ def news_feed(request):
     user = auth.get_user(request)
     if not user.is_authenticated:
         return redirect('/users_blogs/')
-    user = auth.get_user_model().objects.get(username='qwe')
     newsfeed = NewsFeed.objects.get(user=user)
     userblogs = newsfeed.blogs.all()
     outposts = []
@@ -29,37 +28,48 @@ def news_feed(request):
 
 @login_required
 def personal_blog(request):
-    user = auth.get_user_model().objects.get(username='qwe')
+    user = auth.get_user(request)
     blog = Blog.objects.get(user=user)
     posts = blog.post_set.all()
     return render_to_response('blog/PersonalBlog.html',
                               {
                                   'blog': blog,
                                   'posts': posts,
+                                  'user': user,
                               })
 
 
 def users_blogs(request):
     blogs = Blog.objects.all()
+    user = auth.get_user(request)
+    if not user.is_authenticated:
+        user = None
     return render_to_response('blog/UsersBlogs.html',
                               {
                                   'blogs': blogs,
-
+                                  'user': user,
                               })
 
-def get_post(request):
-    pass
+
+def get_post(request, post_id):
+    user = auth.get_user(request)
+    post = Post.objects.get(id=post_id)
+    return render_to_response('blog/Post.html',
+                              {
+                                  'post': post,
+                                  'user': user,
+                              })
 
 
+@login_required
 def add_post(request):
-    user = auth.get_user_model().objects.get(username='qwe')
+    user = auth.get_user(request)
     blog = Blog.objects.get(user=user)
     if request.method == 'POST':
         post = request.POST
         createform = PostCreateFoorm(post)
         if createform.is_valid():
             new_post = createform.save(commit=False)
-            print(new_post.__dict__)
             new_post.blog_id = blog.id
             new_post.save()
         return render(request,
@@ -77,4 +87,12 @@ def add_post(request):
     return render(request,
                   'blog/AddPost.html',
                   {'postform': createform})
+
+
+def subscribe(request, blog_id):
+    blog = Blog.objects.get(id=blog_id)
+    user = auth.get_user(request)
+    user_news_feed = NewsFeed.objects.get(user=user)
+    user_news_feed.blogs.add(blog)
+    return redirect('/users_blogs/')
 

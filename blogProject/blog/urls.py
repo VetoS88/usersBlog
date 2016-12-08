@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^personal_blog/$', personal_blog, name="personal_blog"),
     url(r'^users_blogs/$', users_blogs, name="users_blogs"),
     url(r'^add_post/$', add_post, name="add_post"),
+    url(r'^subscribe/(?P<blog_id>\d+)/', subscribe, name="subscribe"),
+    url(r'^post/get/(?P<post_id>\d+)/', get_post, name="get_post"),
 
 
 ]

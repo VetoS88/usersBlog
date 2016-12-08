@@ -2,12 +2,13 @@
 {% block content %}
     <h4>Мои подписки</h4>
     {% for blog in blogs %}
-        <p>Блог:{{ blog.name }}</p>
-        <p><a href="/post/get/{{ post.id }}/">Пользователь: {{ blog.user }}</a></p>
+        Блог:{{ blog.name }}<br>
+        Пользователь: {{ blog.user }}<br>
+    <br>
     {% endfor %}
     <hr>
     <h4>Новости</h4>
     {% for post in posts %}
-        <p>{{ post }}</p>
+        <p><a href="/post/get/{{ post.id }}/">{{ post }}</a></p>
     {% endfor %}
 {% endblock%}

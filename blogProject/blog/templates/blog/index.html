@@ -4,10 +4,9 @@
         {% block blog %}
         {% endblock %}
     </div>
-    <h4><a href="{% url 'news_feed' %}">Главная</a></h4>
-    <h4><a href="{% url 'personal_blog' %}">Мой блог</a></h4>
-    <h4><a href="{% url 'users_blogs' %}">Блоги пользователей</a></h4>
-    <h3><a href="{% url 'add_post' %}">Добавить запись</a></h3>
+    <a href="{% url 'news_feed' %}"> Главная </a>
+    <a href="{% url 'personal_blog' %}"> Мой блог </a>
+    <a href="{% url 'users_blogs' %}"> Блоги пользователей </a>
     <div class="personal-feeds">
         {% block content %}{% endblock %}
     </div>

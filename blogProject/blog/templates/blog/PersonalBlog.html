@@ -1,7 +1,7 @@
 {% extends 'blog/index.html' %}
 {% block content %}
-    <h4>Мой блог</h4>
-    <h4>{{ blog.name }}</h4>
+    <h3>Название: <a href="{% url 'personal_blog' %}">{{ blog.name }} </a></h3>
+    <h4><a href="{% url 'add_post' %}">Добавить запись</a></h4>
     <hr>
     {% for post in posts %}
         <p><a href="/post/get/{{ post.id }}/">{{ post.title }}</a></p>

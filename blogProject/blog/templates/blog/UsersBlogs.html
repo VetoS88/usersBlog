@@ -3,8 +3,12 @@
     <h3>Блоги пользователей</h3>
     <hr>
     {% for blog in blogs %}
-        <p><a href="/post/get/{{ blog.id }}/">{{ blog.name }}</a></p>
-        <p><a href="/post/get/{{ blog.user }}/">{{ blog.user }}</a></p>
+        <p><a href="/post/get/{{ blog.id }}/">Блог: {{ blog.name }}</a></p>
+        <p>Пользователь:<a href="/post/get/{{ blog.user }}/"> {{ blog.user }}</a></p>
+        {% if user.is_authenticated %}
+            <p><a href="/subscribe/{{ blog.id }}">Подписаться</a></p>
+        {% endif %}
+    <hr>
     {% endfor %}
 
 

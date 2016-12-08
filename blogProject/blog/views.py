@@ -1,11 +1,16 @@
+from django.conf.urls import url
 from django.contrib import auth
-from django.shortcuts import render, render_to_response
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, render_to_response, redirect
 
 from blog.forms import PostCreateFoorm
 from .models import Post, NewsFeed, Blog
 
 
 def news_feed(request):
+    user = auth.get_user(request)
+    if not user.is_authenticated:
+        return redirect('/users_blogs/')
     user = auth.get_user_model().objects.get(username='qwe')
     newsfeed = NewsFeed.objects.get(user=user)
     userblogs = newsfeed.blogs.all()
@@ -14,15 +19,15 @@ def news_feed(request):
         posts = blog.post_set.all()
         for post in posts:
             outposts.append(post)
-    # print(dir(posts))
-    # print(posts)
+
     return render_to_response('blog/NewsFeed.html',
                               {
                                   'blogs': userblogs,
                                   'posts': outposts,
+                                  'user':  user,
                               })
 
-
+@login_required
 def personal_blog(request):
     user = auth.get_user_model().objects.get(username='qwe')
     blog = Blog.objects.get(user=user)
@@ -42,16 +47,21 @@ def users_blogs(request):
 
                               })
 
+def get_post(request):
+    pass
+
 
 def add_post(request):
     user = auth.get_user_model().objects.get(username='qwe')
     blog = Blog.objects.get(user=user)
     if request.method == 'POST':
         post = request.POST
-        post['blog'] = blog
         createform = PostCreateFoorm(post)
         if createform.is_valid():
-            createform.save()
+            new_post = createform.save(commit=False)
+            print(new_post.__dict__)
+            new_post.blog_id = blog.id
+            new_post.save()
         return render(request,
                       'blog/AddPost.html',
                       {

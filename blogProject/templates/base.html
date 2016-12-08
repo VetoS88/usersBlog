@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static '/css/foundation.css' %}">
+    <title>Блоги</title>
+</head>
+<body>
+<div class="top-bar">
+    <section class="top-bar-section">
+        <ul class="right">
+            {% if user %}
+                <li><a href="/auth/logout/">Выйти ({{ user }})</a></li>
+            {% else %}
+                <li><a href="/auth/login/">Войти</a></li>
+            {% endif %}
+        </ul>
+    </section>
+</div>
+<h1><a href="/">Блог о технологиях и не только</a></h1>
+<div class="row">
+    {% block data %}
+    {% endblock %}
+    {% block login %}
+    {% endblock %}
+</div>
+</body>
+</html>

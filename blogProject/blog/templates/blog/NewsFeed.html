@@ -9,6 +9,8 @@
     <hr>
     <h4>Новости</h4>
     {% for post in posts %}
-        <p><a href="/post/get/{{ post.id }}/">{{ post }}</a></p>
+        <a href="/post/get/{{ post.id }}/">{{ post }}</a><br>
+        Создан: {{ post.created_date }}<br>
+        <hr>
     {% endfor %}
 {% endblock%}

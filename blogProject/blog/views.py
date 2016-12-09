@@ -1,9 +1,7 @@
-from django.conf.urls import url
 from django.contrib import auth
-from django.shortcuts import render, render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import RedirectView
-from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
 from django.views.generic import TemplateView
 
 from blog.forms import PostCreateFoorm
@@ -18,35 +16,28 @@ class UserNewsFeed(TemplateView):
         if not user.is_authenticated:
             return redirect('/users_blogs/')
         newsfeed = NewsFeed.objects.get(user=user)
+        posts = newsfeed.post_set.all()
+
+        print(posts)
         userblogs = newsfeed.blogs.all()
-        outposts = []
-        for blog in userblogs:
-            posts = blog.post_set.all()
-            for post in posts:
-                outposts.append(post)
+        print(userblogs)
         return render(request,
                       self.template_name,
                       {
                           'blogs': userblogs,
-                          'posts': outposts,
-                          'user': user,
-                      })
-
-
-class PersonalBlog(TemplateView):
-    template_name = 'blog/PersonalBlog.html'
-
-    def get(self, request, *args, **kwargs):
-        user = auth.get_user(request)
-        blog = Blog.objects.get(user=user)
-        posts = blog.post_set.all()
-        return render(request,
-                      self.template_name,
-                      {
-                          'blog': blog,
                           'posts': posts,
                           'user': user,
                       })
+
+
+class PersonalBlog(ListView):
+    template_name = 'blog/PersonalBlog.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        user = auth.get_user(self.request)
+        posts = Post.objects.filter(blog__user=user).order_by('-created_date')
+        return posts
 
 
 class UsersBlogs(TemplateView):
@@ -110,3 +101,6 @@ class Subscribe(View):
         user_news_feed = NewsFeed.objects.get(user=user)
         user_news_feed.blogs.add(blog)
         return redirect('/users_blogs/')
+
+
+        # class

@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% block data %}
-<div class="personal-blog">
-        {% block blog %}
-        {% endblock %}
+
+<div class="container">
+    <div class="row">
+        <div class="navbar navbar-default">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'news_feed' %}"> Главная </a></li>l
+                <li><a href="{% url 'personal_blog' %}"> Мой блог </a></li>
+                <li><a href="{% url 'users_blogs' %}"> Блоги пользователей </a></li>
+            </ul>
+        </div>
     </div>
-    <a href="{% url 'news_feed' %}"> Главная </a>
-    <a href="{% url 'personal_blog' %}"> Мой блог </a>
-    <a href="{% url 'users_blogs' %}"> Блоги пользователей </a>
-    <div class="personal-feeds">
+    <div class="row">
         {% block content %}{% endblock %}
     </div>
+</div>
 {% endblock %}

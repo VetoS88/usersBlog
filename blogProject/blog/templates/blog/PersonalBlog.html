@@ -1,12 +1,16 @@
 {% extends 'blog/index.html' %}
 {% block content %}
-    <h3>Название: <a href="{% url 'personal_blog' %}">{{ blog.name }} </a></h3>
-    <h4><a href="{% url 'add_post' %}">Добавить запись</a></h4>
-    <hr>
-    {% for post in posts %}
-        <p><a href="/post/get/{{ post.id }}/">{{ post.title }}</a></p>
-        <p>Дата создания: {{ post.created_date }}</p>
-    {% endfor %}
-
+    <div class="container">
+        <div class="row">
+            <h3>Название: <a href="{% url 'personal_blog' %}">{{ blog.name }} </a></h3>
+            <h4><a href="{% url 'add_post' %}">Добавить запись</a></h4>
+        </div>
+        <div class="row">
+            {% for post in posts %}
+                <p><a href="/post/get/{{ post.id }}/">{{ post.title }}</a></p>
+                <p>Дата создания: {{ post.created_date }}</p>
+            {% endfor %}
+        </div>
+    </div>
 
 {% endblock%}

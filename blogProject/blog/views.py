@@ -15,11 +15,12 @@ class UserNewsFeed(TemplateView):
         user = auth.get_user(request)
         if not user.is_authenticated:
             return redirect('/users_blogs/')
-        newsfeed = NewsFeed.objects.get(user=user)
-        posts = newsfeed.post_set.all()
+        posts = Post.objects.filter(blog__newsfeed__user=user)
+        # newsfeed = NewsFeed.objects.get(user=user)
+        # posts = newsfeed.post_set.all()
 
-        print(posts)
-        userblogs = newsfeed.blogs.all()
+        # print(posts)
+        userblogs = Blog.objects.filter(newsfeed__user=user)
         print(userblogs)
         return render(request,
                       self.template_name,
@@ -103,4 +104,10 @@ class Subscribe(View):
         return redirect('/users_blogs/')
 
 
-        # class
+class Unsubscribe(View):
+    def dispatch(self, request, *args, **kwargs):
+        blog_id = kwargs['blog_id']
+        blog = Blog.objects.get(id=blog_id)
+        user = auth.get_user(request)
+        user_news_feed = NewsFeed.objects.get(user=user)
+

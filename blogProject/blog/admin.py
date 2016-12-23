@@ -1,10 +1,6 @@
 from django.contrib import admin
 from .models import Post, NewsFeed, Blog
 
-admin.site.register(Blog)
-
-admin.site.register(NewsFeed)
-
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -19,4 +15,29 @@ class PostAdmin(admin.ModelAdmin):
         'blog',
     ]
 
-    filter_horizontal = ['newsfeeds',]
+    filter_horizontal = ['newsfeeds', ]
+
+
+@admin.register(Blog)
+class BlogAdmin(admin.ModelAdmin):
+    list_display = [
+        'name',
+        'user',
+    ]
+
+    list_filter = [
+        'user',
+    ]
+
+
+@admin.register(NewsFeed)
+class NewsFeedAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+    ]
+
+    list_filter = [
+        'user',
+    ]
+
+    filter_horizontal = ['blogs', ]

@@ -8,6 +8,7 @@
         <div class="row">
             Блог:{{ blog.name }}
             Пользователь: {{ blog.user }}<br>
+            <p><a href="/unsubscribe/{{ blog.id }}">Отписаться</a></p>
         </div>
         {% endfor %}
     </div>

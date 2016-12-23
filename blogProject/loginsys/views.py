@@ -16,7 +16,7 @@ def login(request):
             auth.login(request, user)
             return redirect('/')
         else:
-            args['login_error'] = "Пользователь не найден"
+            args['login_error'] = "Пользователь не существует, либо пароль не верен."
             return render_to_response('loginsys/login.html', args)
 
     else:
@@ -35,10 +35,12 @@ def register(request):
     if request.POST:
         newuser_form = UserCreationForm(request.POST)
         if newuser_form.is_valid():
-            newuser_form.save()
-            newuser = auth.authenticate(username=newuser_form.cleaned_data['username'], password=newuser_form.cleaned_data['password2'])
+            new_user = newuser_form.save()
+            newuser = auth.authenticate(username=newuser_form.cleaned_data['username'],
+                                        password=newuser_form.cleaned_data['password2'])
             auth.login(request, newuser)
             return redirect('/')
         else:
             args['form'] = newuser_form
     return render_to_response('loginsys/register.html', args)
+

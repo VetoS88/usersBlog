@@ -5,6 +5,7 @@ from django.views.generic import ListView
 from django.views.generic import TemplateView
 
 from blog.forms import PostCreateFoorm
+from blog.siganls.user_creating import add_blog, add_newsfeed
 from .models import Post, NewsFeed, Blog
 
 
@@ -16,12 +17,7 @@ class UserNewsFeed(TemplateView):
         if not user.is_authenticated:
             return redirect('/users_blogs/')
         posts = Post.objects.filter(blog__newsfeed__user=user)
-        # newsfeed = NewsFeed.objects.get(user=user)
-        # posts = newsfeed.post_set.all()
-
-        # print(posts)
         userblogs = Blog.objects.filter(newsfeed__user=user)
-        print(userblogs)
         return render(request,
                       self.template_name,
                       {
@@ -45,10 +41,12 @@ class UsersBlogs(TemplateView):
     template_name = 'blog/UsersBlogs.html'
 
     def get(self, request, *args, **kwargs):
-        blogs = Blog.objects.all()
         user = auth.get_user(request)
         if not user.is_authenticated:
             user = None
+            blogs = Blog.objects.all()
+        else:
+            blogs = Blog.objects.exclude(newsfeed__user=user)
         return render(request,
                       self.template_name,
                       {
@@ -73,7 +71,8 @@ class AddPost(TemplateView):
 
     def post(self, request, *args, **kwargs):
         user = auth.get_user(request)
-        blog = Blog.objects.get(user=user)
+        # нужно будет сделать когда блог будет не один
+        blog = Blog.objects.filter(user=user)[0]
         post = request.POST
         createform = PostCreateFoorm(post)
         if createform.is_valid():
@@ -110,4 +109,5 @@ class Unsubscribe(View):
         blog = Blog.objects.get(id=blog_id)
         user = auth.get_user(request)
         user_news_feed = NewsFeed.objects.get(user=user)
-
+        user_news_feed.blogs.remove(blog)
+        return redirect('/')

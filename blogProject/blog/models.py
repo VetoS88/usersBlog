@@ -29,7 +29,7 @@ class Blog(m.Model):
         max_length=50,
     )
 
-    user = m.OneToOneField(
+    user = m.ForeignKey(
         'auth.User',
         verbose_name='Пользователь',
     )

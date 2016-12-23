@@ -25,8 +25,8 @@ SECRET_KEY = '7qi&8#sb*a=%(45ty+l-p%3p4ij_uom4id6(&(4i6210!x)^g4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vetos.pythonanywhere.com',]
 
 # Application definition
 

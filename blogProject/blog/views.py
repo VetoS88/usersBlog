@@ -5,7 +5,6 @@ from django.views.generic import ListView
 from django.views.generic import TemplateView
 
 from blog.forms import PostCreateFoorm
-from blog.siganls.user_creating import add_blog, add_newsfeed
 from .models import Post, NewsFeed, Blog
 
 

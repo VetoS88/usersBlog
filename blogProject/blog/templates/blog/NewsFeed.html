@@ -6,8 +6,7 @@
         </div>
         {% for blog in blogs %}
         <div class="row">
-            Блог:{{ blog.name }}
-            Пользователь: {{ blog.user }}<br>
+            {{ blog.name }} ({{ blog.user }})<br>
             <p><a href="/unsubscribe/{{ blog.id }}">Отписаться</a></p>
         </div>
         {% endfor %}
@@ -15,9 +14,9 @@
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
         <h4>Новости</h4>
         {% for post in posts %}
-            <a href="/post/get/{{ post.id }}/">{{ post }}</a><br>
+            <h3><a href="/post/get/{{ post.id }}/">{{ post }}</a></h3><br>
             Создан: {{ post.created_date }}<br>
-
+            <hr>
         {% endfor %}
     </div>
 {% endblock%}

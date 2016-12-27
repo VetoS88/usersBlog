@@ -13,9 +13,13 @@
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
         <h4>Новости</h4>
-        {% for post in posts %}
-            <h3><a href="/post/get/{{ post.id }}/">{{ post }}</a></h3><br>
-            Создан: {{ post.created_date }}<br>
+        {% for post, reviewed in posts.items %}
+            <h3><a href="/post/get/{{ post.id }}/">{{ post.title }}</a></h3><br>
+            Создан: {{ post.created_date }}
+            {% if reviewed %} (Прочитан)
+            {% else %} (не прочитан)
+            {% endif %}
+            <br>
             <hr>
         {% endfor %}
     </div>

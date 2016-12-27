@@ -11,6 +11,7 @@ def posts_to_newsfeed(sender, instance, action, pk_set, **kwargs):
         print(type(pk_set))
         blog = Blog.objects.get(id=pk_set.pop())
         print(blog)
+
 '''
     print(sender)
     print(instance)
@@ -18,7 +19,7 @@ def posts_to_newsfeed(sender, instance, action, pk_set, **kwargs):
     print('reverse: ', kwargs['reverse'])
     print('pk_set: ', kwargs['pk_set'])
     print('using: ', kwargs['using'])
-Hook subscribing!
+    Hook subscribing!
 
 
 <class 'blog.models.NewsFeed_blogs'>

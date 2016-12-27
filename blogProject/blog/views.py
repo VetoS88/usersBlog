@@ -3,9 +3,11 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from blog.forms import PostCreateFoorm
-from .models import Post, NewsFeed, Blog
+from .models import Post, NewsFeed, Blog, Reviewed
 
 
 class UserNewsFeed(TemplateView):
@@ -15,17 +17,23 @@ class UserNewsFeed(TemplateView):
         user = auth.get_user(request)
         if not user.is_authenticated:
             return redirect('/users_blogs/')
-        posts = Post.objects.filter(blog__newsfeed__user=user)
+        newsfeed = NewsFeed.objects.filter(user=user)
+        posts = Post.objects.filter(blog__newsfeed=newsfeed)
+        reviewed = Post.objects.filter(reviewed__news_feed=newsfeed)
         userblogs = Blog.objects.filter(newsfeed__user=user)
+        reviewed_posts = {}
+        for post in posts:
+            reviewed_posts[post] = True if post in reviewed else False
         return render(request,
                       self.template_name,
                       {
                           'blogs': userblogs,
-                          'posts': posts,
+                          'posts': reviewed_posts,
                           'user': user,
                       })
 
 
+@method_decorator(login_required, name='dispatch')
 class PersonalBlog(ListView):
     template_name = 'blog/PersonalBlog.html'
     context_object_name = 'posts'
@@ -63,7 +71,31 @@ class GetPost(TemplateView):
         context['post'] = Post.objects.get(id=post_id)
         return context
 
+    def get(self, request, *args, **kwargs):
+        user = auth.get_user(request)
+        context = self.get_context_data(**kwargs)
+        if not user.is_authenticated:
+            user = None
+        else:
+            newsfeed = NewsFeed.objects.get(user=user)
+            post = context['post']
+            reviewed = Reviewed.objects.filter(news_feed=newsfeed, post=post)
+            '''[0] костыль. потому что может быть
+            несколько связей. '''
+            if not reviewed:
+                # print('Mark Reviewed!')
+                is_review = Reviewed(
+                    news_feed=newsfeed,
+                    post=post,
+                    isreviewed=True
+                )
+                is_review.save()
+            # else:
+            #     print('Reviewd already!')
+        return self.render_to_response(context)
 
+
+@method_decorator(login_required, name='dispatch')
 class AddPost(TemplateView):
     template_name = 'blog/AddPost.html'
     form_class = PostCreateFoorm
@@ -91,7 +123,8 @@ class AddPost(TemplateView):
                           'postform': self.form_class
                       })
 
-
+#сделать наследнком RedirectView
+@method_decorator(login_required, name='dispatch')
 class Subscribe(View):
     def dispatch(self, request, *args, **kwargs):
         blog_id = kwargs['blog_id']
@@ -102,6 +135,7 @@ class Subscribe(View):
         return redirect('/users_blogs/')
 
 
+@method_decorator(login_required, name='dispatch')
 class Unsubscribe(View):
     def dispatch(self, request, *args, **kwargs):
         blog_id = kwargs['blog_id']

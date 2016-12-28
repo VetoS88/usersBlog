@@ -17,13 +17,11 @@ class UserNewsFeed(TemplateView):
         user = auth.get_user(request)
         if not user.is_authenticated:
             return redirect('/users_blogs/')
-        newsfeed = NewsFeed.objects.filter(user=user)
-        posts = Post.objects.filter(blog__newsfeed=newsfeed)
-        reviewed = Post.objects.filter(reviewed__news_feed=newsfeed)
+        posts = Post.objects.filter(blog__newsfeed__user=user).order_by('-created_date')
+        reviewed = Post.objects.filter(reviewed__news_feed__user=user,
+                                       reviewed__isreviewed=True)
         userblogs = Blog.objects.filter(newsfeed__user=user)
-        reviewed_posts = {}
-        for post in posts:
-            reviewed_posts[post] = True if post in reviewed else False
+        reviewed_posts = [(post, True if post in reviewed else False) for post in posts]
         return render(request,
                       self.template_name,
                       {
@@ -80,8 +78,6 @@ class GetPost(TemplateView):
             newsfeed = NewsFeed.objects.get(user=user)
             post = context['post']
             reviewed = Reviewed.objects.filter(news_feed=newsfeed, post=post)
-            '''[0] костыль. потому что может быть
-            несколько связей. '''
             if not reviewed:
                 # print('Mark Reviewed!')
                 is_review = Reviewed(
@@ -90,8 +86,8 @@ class GetPost(TemplateView):
                     isreviewed=True
                 )
                 is_review.save()
-            # else:
-            #     print('Reviewd already!')
+                # else:
+                #     print('Reviewd already!')
         return self.render_to_response(context)
 
 
@@ -123,7 +119,8 @@ class AddPost(TemplateView):
                           'postform': self.form_class
                       })
 
-#сделать наследнком RedirectView
+
+# сделать наследнком RedirectView
 @method_decorator(login_required, name='dispatch')
 class Subscribe(View):
     def dispatch(self, request, *args, **kwargs):
@@ -141,6 +138,8 @@ class Unsubscribe(View):
         blog_id = kwargs['blog_id']
         blog = Blog.objects.get(id=blog_id)
         user = auth.get_user(request)
-        user_news_feed = NewsFeed.objects.get(user=user)
-        user_news_feed.blogs.remove(blog)
+        news_feed = NewsFeed.objects.get(user=user)
+        news_feed.blogs.remove(blog)
+        posts = Post.objects.filter(newsfeeds=news_feed, blog=blog)
+        [post.newsfeeds.clear() for post in posts]
         return redirect('/')

@@ -6,11 +6,11 @@ from blog.models import NewsFeed, Blog
 
 @receiver(m2m_changed, sender=NewsFeed.blogs.through)
 def posts_to_newsfeed(sender, instance, action, pk_set, **kwargs):
-    print('Hook subscribing!')
+    # print('Hook subscribing!')
     if action == 'post_add':
-        print(type(pk_set))
+        # print(type(pk_set))
         blog = Blog.objects.get(id=pk_set.pop())
-        print(blog)
+        # print(blog)
 
 '''
     print(sender)

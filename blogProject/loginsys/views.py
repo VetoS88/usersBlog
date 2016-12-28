@@ -4,6 +4,8 @@ from django.contrib import auth
 from django.contrib.auth.forms import UserCreationForm
 from django.template.context_processors import csrf
 
+from loginsys.forms import ExtUserCreationForm
+
 
 def login(request):
     args = {}
@@ -31,9 +33,9 @@ def logout(request):
 def register(request):
     args = {}
     args.update(csrf(request))
-    args['form'] = UserCreationForm()
+    args['form'] = ExtUserCreationForm()
     if request.POST:
-        newuser_form = UserCreationForm(request.POST)
+        newuser_form = ExtUserCreationForm(request.POST)
         if newuser_form.is_valid():
             new_user = newuser_form.save()
             newuser = auth.authenticate(username=newuser_form.cleaned_data['username'],

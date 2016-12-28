@@ -3,10 +3,11 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from blog.forms import PostCreateFoorm
-from blog.siganls.user_creating import add_blog, add_newsfeed
-from .models import Post, NewsFeed, Blog
+from .models import Post, NewsFeed, Blog, Reviewed
 
 
 class UserNewsFeed(TemplateView):
@@ -16,17 +17,21 @@ class UserNewsFeed(TemplateView):
         user = auth.get_user(request)
         if not user.is_authenticated:
             return redirect('/users_blogs/')
-        posts = Post.objects.filter(blog__newsfeed__user=user)
+        posts = Post.objects.filter(blog__newsfeed__user=user).order_by('-created_date')
+        reviewed = Post.objects.filter(reviewed__news_feed__user=user,
+                                       reviewed__isreviewed=True)
         userblogs = Blog.objects.filter(newsfeed__user=user)
+        reviewed_posts = [(post, True if post in reviewed else False) for post in posts]
         return render(request,
                       self.template_name,
                       {
                           'blogs': userblogs,
-                          'posts': posts,
+                          'posts': reviewed_posts,
                           'user': user,
                       })
 
 
+@method_decorator(login_required, name='dispatch')
 class PersonalBlog(ListView):
     template_name = 'blog/PersonalBlog.html'
     context_object_name = 'posts'
@@ -64,7 +69,29 @@ class GetPost(TemplateView):
         context['post'] = Post.objects.get(id=post_id)
         return context
 
+    def get(self, request, *args, **kwargs):
+        user = auth.get_user(request)
+        context = self.get_context_data(**kwargs)
+        if not user.is_authenticated:
+            user = None
+        else:
+            newsfeed = NewsFeed.objects.get(user=user)
+            post = context['post']
+            reviewed = Reviewed.objects.filter(news_feed=newsfeed, post=post)
+            if not reviewed:
+                # print('Mark Reviewed!')
+                is_review = Reviewed(
+                    news_feed=newsfeed,
+                    post=post,
+                    isreviewed=True
+                )
+                is_review.save()
+                # else:
+                #     print('Reviewd already!')
+        return self.render_to_response(context)
 
+
+@method_decorator(login_required, name='dispatch')
 class AddPost(TemplateView):
     template_name = 'blog/AddPost.html'
     form_class = PostCreateFoorm
@@ -93,6 +120,8 @@ class AddPost(TemplateView):
                       })
 
 
+# сделать наследнком RedirectView
+@method_decorator(login_required, name='dispatch')
 class Subscribe(View):
     def dispatch(self, request, *args, **kwargs):
         blog_id = kwargs['blog_id']
@@ -103,11 +132,14 @@ class Subscribe(View):
         return redirect('/users_blogs/')
 
 
+@method_decorator(login_required, name='dispatch')
 class Unsubscribe(View):
     def dispatch(self, request, *args, **kwargs):
         blog_id = kwargs['blog_id']
         blog = Blog.objects.get(id=blog_id)
         user = auth.get_user(request)
-        user_news_feed = NewsFeed.objects.get(user=user)
-        user_news_feed.blogs.remove(blog)
+        news_feed = NewsFeed.objects.get(user=user)
+        news_feed.blogs.remove(blog)
+        posts = Post.objects.filter(newsfeeds=news_feed, blog=blog)
+        [post.newsfeeds.clear() for post in posts]
         return redirect('/')

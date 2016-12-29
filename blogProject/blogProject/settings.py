@@ -22,10 +22,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '7qi&8#sb*a=%(45ty+l-p%3p4ij_uom4id6(&(4i6210!x)^g4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ['vetos.pythonanywhere.com',]
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vetos.pythonanywhere.com',]
 
 # Application definition
 
@@ -89,10 +89,23 @@ WSGI_APPLICATION = 'blogProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'vetos$blogs',
+        'USER': 'vetos',
+        'PASSWORD': 'Q123456789',
+        'HOST': 'vetos.mysql.pythonanywhere-services.com',
+        'OPTIONS': {
+           'init_command': "SET sql_mode='STRICT_ALL_TABLES'",
+        },
     }
 }
 
@@ -145,7 +158,7 @@ LOGIN_URL = '/auth/login/'
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 2525
 EMAIL_HOST_USER = "blog.mailer@mail.ru"
-EMAIL_HOST_PASSWORD = "dummy"
+EMAIL_HOST_PASSWORD = "Q123456789"
 EMAIL_USE_TLS = True
 
 SERVER_EMAIL = EMAIL_HOST_USER

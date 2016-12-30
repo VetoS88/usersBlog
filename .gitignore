@@ -97,4 +97,9 @@ git remote add origin https://github.com/VetoS88/usersBlog
 tz.txt
 /tz.txt
 /usersBlogvenv/
-
+/blogProject/db.sqlite3
+/blogProject/blog/migrations/
+/blogProject/blog/migrations_b/
+/blogProject/static/
+/start.cmd
+/blogProject/contentStorage/

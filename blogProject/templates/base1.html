@@ -1,0 +1,35 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dopstyle.css' %}">
+    <title>Блоги</title>
+</head>
+<body>
+    <div class="top-bar">
+        <section class="top-bar-section">
+            <ul class="right">
+                {% if user %}
+                    <li><a href="/auth/logout/">Выйти ({{ user }})</a></li>
+                {% else %}
+                    <li><a href="/auth/login/">Войти</a></li>
+                {% endif %}
+            </ul>
+        </section>
+    </div>
+    <div class="container"><!--{#<div class="container border-container"> #}-->
+        <div class="row">
+            <h1><a href="/">Блог о технологиях и не только</a></h1>
+        </div>
+        {% block data %}
+        {% endblock %}
+        {% block login %}
+        {% endblock %}
+        {% block post %}
+        {% endblock%}
+    </div>
+    <script src="//code.jquery.com/jquery.js"></script>
+</body>
+</html>

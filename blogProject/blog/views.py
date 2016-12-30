@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+from django.core.paginator import Paginator
 from blog.forms import PostCreateFoorm
 from .models import Post, NewsFeed, Blog, Reviewed, PostContent
 
@@ -22,11 +22,13 @@ class UserNewsFeed(TemplateView):
                                        reviewed__isreviewed=True)
         userblogs = Blog.objects.filter(newsfeed__user=user)
         reviewed_posts = [(post, True if post in reviewed else False) for post in posts]
+        p_number = 1
+        page = Paginator(reviewed_posts, 4)
         return render(request,
                       self.template_name,
                       {
                           'blogs': userblogs,
-                          'posts': reviewed_posts,
+                          'posts': page.page(p_number),
                           'user': user,
                       })
 
@@ -68,7 +70,7 @@ class GetPost(TemplateView):
         post_id = context['post_id']
         post = Post.objects.get(id=post_id)
         context['post'] = post
-        context['postcontent'] = PostContent.objects.filter(post=post)[0]
+        context['postcontent'] = PostContent.objects.filter(post=post)
         return context
 
     def get(self, request, *args, **kwargs):

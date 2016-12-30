@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block data %}
-<form class="form-horizontal" action="{% url 'add_post' %}" method="post">
+<form class="form-horizontal" action="{% url 'add_post' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table>
 

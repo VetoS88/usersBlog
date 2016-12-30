@@ -97,15 +97,17 @@ class AddPost(TemplateView):
     form_class = PostCreateFoorm
 
     def post(self, request, *args, **kwargs):
-        user = auth.get_user(request)
-        # нужно будет сделать когда блог будет не один
-        blog = Blog.objects.filter(user=user)[0]
+        # user = auth.get_user(request)
+        # # нужно будет сделать когда блог будет не один
+        # blog = Blog.objects.filter(user=user)[0]
         post = request.POST
-        createform = PostCreateFoorm(post)
+        files = request.FILES
+        createform = PostCreateFoorm(post, files, request=request)
         if createform.is_valid():
-            new_post = createform.save(commit=False)
-            new_post.blog_id = blog.id
-            new_post.save()
+            new_post = createform.save()
+            # new_post.blog_id = blog.id
+            # new_post.save()
+            return redirect('/personal_blog/')
         return render(request,
                       self.template_name,
                       {

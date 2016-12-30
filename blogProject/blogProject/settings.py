@@ -150,3 +150,7 @@ EMAIL_USE_TLS = True
 
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'contentStorage')
+
+MEDIA_URL = '/contentStorage/'

@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 
 
 class ExtUserCreationForm(UserCreationForm):
-    email = forms.EmailField(label="Email", max_length=254)
+    email = forms.EmailField(label='Email', max_length=254)
 
     class Meta:
         model = User
-        fields = ("username", "email")
+        fields = ('username', 'email', 'password1','password2')
         field_classes = {'username': UsernameField}

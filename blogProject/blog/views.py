@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from blog.forms import PostCreateFoorm
-from .models import Post, NewsFeed, Blog, Reviewed
+from .models import Post, NewsFeed, Blog, Reviewed, PostContent
 
 
 class UserNewsFeed(TemplateView):
@@ -66,7 +66,9 @@ class GetPost(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(GetPost, self).get_context_data(**kwargs)
         post_id = context['post_id']
-        context['post'] = Post.objects.get(id=post_id)
+        post = Post.objects.get(id=post_id)
+        context['post'] = post
+        context['postcontent'] = PostContent.objects.filter(post=post)[0]
         return context
 
     def get(self, request, *args, **kwargs):
